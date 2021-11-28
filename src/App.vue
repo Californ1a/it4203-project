@@ -1,30 +1,21 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
+  <nav>
+    <div class="nav-wrapper blue darken-3">
+      <div class="container">
+        <a href="#!" class="brand-logo">IT4203 Project</a>
+        <ul class="right hide-on-med-and-down">
+          <!-- <li><a href="sass.html">
+            <i class="material-icons left">search</i>Link with Left Icon</a>
+        </li>
+        <li><a href="badges.html">
+            <i class="material-icons right">view_module</i>Link with Right Icon</a>
+        </li> -->
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <router-view class="container" />
 </template>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>
