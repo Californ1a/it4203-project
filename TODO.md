@@ -1,7 +1,7 @@
 # TODO
 
 * [x] Setup
-* [ ] Display top/popular movies/TV shows
+* [x] Display top/popular movies/TV shows
 * [ ] Search/discover movies/TV shows
   * [ ] 2 search/discovery methods
 * [ ] Display search results in multiple layouts
