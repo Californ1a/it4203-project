@@ -8,7 +8,7 @@
         <span class="card-title">{{ movieState.error }}</span>
       </div>
     </div>
-    <div class="row">
+    <div class="movie-list">
       <MovieCard v-for="movie in movies" :movie="movie" :key="movie.id" />
     </div>
   </div>
@@ -29,7 +29,9 @@ export default {
     const route = useRoute();
     const movieType = computed(() => route.params.type);
     watch(movieType, () => {
-      document.title = `${movieType.value} Movies`;
+      const prettyType = movieType.value.replace('_', ' ')
+        .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+      document.title = `${prettyType} Movies | Movie App`;
     }, { immediate: true });
     const movieState = useMovies(movieType);
     const movies = computed(() => movieState.data.map((movie) => ({
@@ -45,16 +47,14 @@ export default {
   },
 };
 
-// eslint-disable-next-line no-unused-vars
-// const props = defineProps({
-//   type: String,
-// });
-
 </script>
 
 <style scoped>
-  .row {
+  .movie-list {
     display: flex;
     flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-evenly;
+    margin: 20px 0 20px 0;
   }
 </style>
