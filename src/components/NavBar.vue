@@ -30,14 +30,6 @@ export default {
 </script>
 
 <style scoped>
-  /* nav {
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-  } */
-
   nav .nav-wrapper {
     display: flex;
     justify-content: space-around;

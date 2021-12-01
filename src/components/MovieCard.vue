@@ -1,6 +1,6 @@
 <template>
   <div class="movie-card">
-    <div class="card hoverable movie light-blue darken-4">
+    <div class="card hoverable movie">
       <div v-if="isImage" class="card-image waves-effect waves-block waves-light">
         <img class="activator" :src="movie.poster" />
       </div>
@@ -27,7 +27,6 @@ const isImage = computed(() => props.movie.poster.match(/\.(jpeg|jpg|gif|png)$/)
 <style scoped>
   .movie-card img {
     width: 220px;
-    /* height: auto; */
     margin: auto;
   }
 
@@ -38,5 +37,6 @@ const isImage = computed(() => props.movie.poster.match(/\.(jpeg|jpg|gif|png)$/)
   .movie {
     width: 220px;
     margin: auto;
+    background-color: #534B62;
   }
 </style>

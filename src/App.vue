@@ -7,5 +7,8 @@
 import NavBar from '@/components/NavBar.vue';
 </script>
 
-<style scoped>
+<style>
+  body {
+    background-color: #1B1725;
+  }
 </style>
