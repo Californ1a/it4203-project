@@ -14,8 +14,14 @@ export default function useMovies(type) {
       moviesState.error = '';
       moviesState.data = [];
 
-      const response = await API.getMovies(type);
-      moviesState.data = response.results;
+      const response = await API.getMovies(type.value);
+      if (response.results) {
+        moviesState.data = response.results;
+      } else if (response.id) {
+        moviesState.data = [response];
+      } else {
+        moviesState.error = 'No data';
+      }
     } catch (err) {
       moviesState.error = err.message || 'Something went wrong';
     } finally {
@@ -23,7 +29,7 @@ export default function useMovies(type) {
     }
   }
 
-  watch(() => type, loadData, { immediate: true });
+  watch(type, loadData, { immediate: true });
 
   return moviesState;
 }
