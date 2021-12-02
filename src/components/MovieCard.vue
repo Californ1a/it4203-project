@@ -1,6 +1,6 @@
 <template>
   <div class="movie-card" :style="cssProps">
-    <div class="card sticky-action hoverable movie" v-bind:class="classObject">
+    <div class="card hoverable movie" v-bind:class="classObject">
       <div v-if="isImage" class="card-image waves-effect waves-block waves-light">
         <img class="activator" :src="movie.poster" />
       </div>
@@ -25,6 +25,7 @@ import { computed } from 'vue';
 export default {
   props: {
     movie: Object,
+    layout: String,
   },
   setup(props) {
     const isImage = computed(() => props.movie.poster.match(/\.(jpeg|jpg|gif|png)$/) != null);
@@ -42,6 +43,7 @@ export default {
     classObject() {
       return {
         'no-poster': this.movie.poster.match(/\.(jpeg|jpg|gif|png)$/) == null,
+        'sticky-action': this.layout === 'grid_on',
       };
     },
     cssProps() {
@@ -108,11 +110,11 @@ export default {
   padding: 10px 24px;
 }
 
-.hoverable:hover {
-  box-shadow: 0 8px 17px 0 rgba(255, 255, 255, 0.1), 0 6px 20px 0 rgba(255, 255, 255, 0.09)
-}
-
 .card.no-poster .card-content {
   min-height: 250px;
+}
+
+.hoverable:hover {
+  box-shadow: 0 8px 17px 0 rgba(255, 255, 255, 0.1), 0 6px 20px 0 rgba(255, 255, 255, 0.09)
 }
 </style>

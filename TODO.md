@@ -4,7 +4,7 @@
 * [x] Display top/popular movies/TV shows
 * [ ] Search/discover movies/TV shows
   * [ ] 2 search/discovery methods
-* [ ] Display search results in multiple layouts
+* [x] Display search results in multiple layouts
   * [x] Sorting
   * [x] Pagination
   * [ ] Filtering

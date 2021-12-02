@@ -1,8 +1,11 @@
 <template>
   <div class="home">
     <div class="main-content">
-      <div class="movie-list">
-        <MovieCard v-for="movie in movies" :movie="movie" :key="movie.id" />
+      <div class="main-main">
+        <div class="movie-list" :class="movieState.layout">
+          <MovieCard v-for="movie in movies" :movie="movie" :key="movie.id"
+            :layout="movieState.layout" />
+        </div>
         <div v-if="movieState.loading" class="progress blue lighten-4">
           <div class="indeterminate blue darken-3"></div>
         </div>
@@ -10,6 +13,10 @@
       <div class="filters">
         <!-- TODO TV/Movie toggle
         https://codepen.io/personable/pen/stpwD?__cf_chl_captcha_tk__=Afz.BvUzUxQKL5iFgNggt5ttfVITuZgvJHNMrKnLolQ-1638469048-0-gaNycGzNCdE -->
+        <div class="filter-group">
+          <a class="waves-effect waves-light btn blue darken-3" @click="changeLayout">
+            <i class="material-icons left">{{movieState.layout}}</i>change layout</a>
+        </div>
         <div class="filter-group">
           <label>Sort by:</label>
           <select v-model="sortBy" @input="changeSort">
@@ -98,10 +105,15 @@ export default {
       }
     };
 
+    const changeLayout = () => {
+      movieState.layout = (movieState.layout === 'grid_off') ? 'grid_on' : 'grid_off';
+    };
+
     return {
       movieState,
       movies,
       changeSort,
+      changeLayout,
     };
   },
   data() {
@@ -155,7 +167,7 @@ select {
   gap: 10px;
 }
 
-.movie-list {
+.main-main {
   flex: 1;
 }
 
@@ -167,5 +179,45 @@ select {
   display: flex;
   flex-direction: column;
   gap: 3px;
+}
+
+.grid_off {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.grid_off .card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  width: 90%;
+}
+
+/* .grid_off .card .card-reveal {
+  display: none !important;
+} */
+
+/* .grid_off .card-reveal .card-title,
+.grid_off .card-reveal p {
+  margin-right: 12.4%;
+} */
+
+.grid_off .card-reveal .card-title {
+  padding: 5px 10px;
+}
+
+.grid_off .card-image img {
+  width: 80px !important;
+  margin: 0;
+}
+
+.grid_off .card-image,
+.grid_off .card-content,
+.grid_off .card-action {
+  width: fit-content;
+}
+
+.grid_off .card .card-action a {
+  margin-right: 0 !important;
 }
 </style>
