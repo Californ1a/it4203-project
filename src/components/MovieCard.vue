@@ -1,6 +1,6 @@
 <template>
-  <div class="movie-card">
-    <div class="card sticky-action hoverable movie">
+  <div class="movie-card" :style="cssProps">
+    <div class="card sticky-action hoverable movie" v-bind:class="classObject">
       <div v-if="isImage" class="card-image waves-effect waves-block waves-light">
         <img class="activator" :src="movie.poster" />
       </div>
@@ -32,48 +32,87 @@ export default {
       isImage,
     };
   },
+  data() {
+    return {
+      isActive: true,
+      error: null,
+    };
+  },
+  computed: {
+    classObject() {
+      return {
+        'no-poster': this.movie.poster.match(/\.(jpeg|jpg|gif|png)$/) == null,
+      };
+    },
+    cssProps() {
+      return {
+        '--card-background-image': `url(${this.movie.backdrop})`,
+      };
+    },
+  },
 };
 </script>
 
 <style scoped>
-  .movie-card img {
-    width: 220px;
-    margin: auto;
-  }
+.movie-card img {
+  width: 220px;
+  margin: auto;
+}
 
-  .movie-card {
+/* .movie-card {
     flex: 1;
-  }
+  } */
 
-  .movie {
-    width: 220px;
-    margin: auto;
-    background-color: #534B62;
-  }
+.movie {
+  width: 220px;
+  margin: auto;
+  background-color: #534B62;
+}
 
-  .card .card-title {
-    font-size: 1.1rem;
-  }
+.card .card-title {
+  font-size: 1.1rem;
+  text-shadow: 2px 1px 3px black;
+}
 
-  .card-reveal .card-title {
-    display: flex;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    background-color: #534B62;
-    padding: 20px 10px 20px 15px;
-  }
+.card-reveal .card-title::after {
+  content: '';
+  background-image: var(--card-background-image);
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  width: 100%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;
+  opacity: 0.4;
+}
 
-  .card-reveal {
-    padding: 0;
-  }
+.card-reveal .card-title {
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background-color: #534B62;
+  padding: 20px 10px 20px 15px;
+}
 
-  .card-reveal p {
-    margin-top: 0;
-    padding: 10px 24px;
-  }
+.card-reveal {
+  padding: 0;
+}
 
-  .hoverable:hover {
-    box-shadow: 0 8px 17px 0 rgba(255, 255, 255, 0.1), 0 6px 20px 0 rgba(255, 255, 255, 0.09)
-  }
+.card-reveal p {
+  margin-top: 0;
+  padding: 10px 24px;
+}
+
+.hoverable:hover {
+  box-shadow: 0 8px 17px 0 rgba(255, 255, 255, 0.1), 0 6px 20px 0 rgba(255, 255, 255, 0.09)
+}
+
+.card.no-poster .card-content {
+  min-height: 250px;
+}
 </style>

@@ -5,8 +5,8 @@
 * [ ] Search/discover movies/TV shows
   * [ ] 2 search/discovery methods
 * [ ] Display search results in multiple layouts
-  * [ ] Sorting
-  * [ ] Pagination
+  * [x] Sorting
+  * [x] Pagination
   * [ ] Filtering
 * [ ] Display detailed movie data for one chosen movie/TV show
   * [ ] Basic info: cast, reviews

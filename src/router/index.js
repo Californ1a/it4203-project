@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 
 const routes = [{
-  path: '/:type',
+  path: '/movies/:type',
   name: 'Home',
   component: Home,
 }];
@@ -13,7 +13,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'Home') {
+  // console.log(to.name);
+  if (!to.name) {
     next({
       name: 'Home',
       params: {
