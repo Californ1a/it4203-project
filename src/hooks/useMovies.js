@@ -7,6 +7,7 @@ export default function useMovies(type) {
     error: '',
     data: [],
     type: type.value,
+    layout: 'grid_on',
   });
 
   async function loadData() {
@@ -16,7 +17,6 @@ export default function useMovies(type) {
       moviesState.page = 1;
       moviesState.data = [];
       moviesState.type = type.value;
-      moviesState.layout = 'grid_on';
 
       const response = await API.getMovies(type.value);
       if (response.results) {
