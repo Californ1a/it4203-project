@@ -15,7 +15,9 @@
         https://codepen.io/personable/pen/stpwD?__cf_chl_captcha_tk__=Afz.BvUzUxQKL5iFgNggt5ttfVITuZgvJHNMrKnLolQ-1638469048-0-gaNycGzNCdE -->
         <div class="filter-group">
           <a class="waves-effect waves-light btn blue darken-3" @click="changeLayout">
-            <i class="material-icons left">{{movieState.layout}}</i>change layout</a>
+            <i class="material-icons left">
+              {{(movieState.layout === 'grid_off') ? 'grid_on' : 'grid_off'}}
+            </i>change layout</a>
         </div>
         <div class="filter-group">
           <label>Sort by:</label>
@@ -202,8 +204,15 @@ select {
   margin-right: 12.4%;
 } */
 
+.grid_off .card-title {
+  height: 100%;
+  padding: 16px 24px;
+  margin: 0;
+}
+
 .grid_off .card-reveal .card-title {
   padding: 5px 10px;
+  height: auto;
 }
 
 .grid_off .card-image img {
@@ -212,9 +221,16 @@ select {
 }
 
 .grid_off .card-image,
-.grid_off .card-content,
 .grid_off .card-action {
   width: fit-content;
+}
+
+.grid_off .card-content {
+  padding: 0;
+}
+
+.grid_off .card-action {
+  height: fit-content;
 }
 
 .grid_off .card .card-action a {
