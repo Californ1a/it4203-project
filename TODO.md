@@ -17,4 +17,4 @@
 * [ ] Auth/login
 * [ ] Save favorites and watch list for user
   * [ ] Display lists
-  * [ ] Manage lists (add and return movies)
+  * [ ] Manage lists (add and return/remove movies)
