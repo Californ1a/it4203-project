@@ -39,4 +39,24 @@ export default {
     error.response = data;
     throw error;
   },
+  async getMovieDetails(id) {
+    if (!id) {
+      return Promise.reject(new Error('Movie ID is required'));
+    }
+    const API_URL = 'https://api.themoviedb.org/3';
+    const API_KEY = `${process.env.VUE_APP_API_KEY_V3}`;
+    const url = `${API_URL}/movie/${id}?api_key=${API_KEY}`;
+    const response = await fetch(url, {
+      headers: {
+        accept: 'application/json',
+      },
+    });
+    const data = await response.json();
+    if (response.ok) {
+      return data;
+    }
+    const error = new Error(data.status_message || 'Something went wrong');
+    error.response = data;
+    throw error;
+  },
 };

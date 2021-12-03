@@ -2,7 +2,7 @@
   <div class="navbar-fixed">
     <nav>
       <div class="nav-wrapper blue darken-3">
-        <a href="#!" class="brand-logo">IT4203 Project</a>
+        <router-link to="/movies/popular" class="brand-logo">IT4203 Project</router-link>
         <form @submit.prevent="updateMovies">
           <div class="input-field blue darken-1">
             <input v-model="searchTerm" ref="searchRef" id="search"
@@ -12,10 +12,16 @@
           </div>
         </form>
         <ul class="right hide-on-med-and-down">
-          <li><a href="sass.html">
-              <i class="material-icons left">search</i>Link with Left Icon</a></li>
-          <li><a href="badges.html">
-              <i class="material-icons right">view_module</i>Link with Right Icon</a></li>
+          <li>
+            <router-link :to="{name:'Home', params:{type:'top_rated'}}">
+              Top Rated Movies
+            </router-link>
+          </li>
+          <li>
+            <router-link :to="{name:'Home', params:{type:'upcoming'}}">
+              Upcoming Movies
+            </router-link>
+          </li>
         </ul>
       </div>
     </nav>
@@ -103,7 +109,7 @@ export default {
           query: searchTerm.value,
         },
       });
-      await store.dispatch('getMovies');
+      await store.dispatch('changeType', 'search');
       if (instance) {
         instance.close();
       }

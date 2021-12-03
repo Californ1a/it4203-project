@@ -5,12 +5,12 @@
     <div class="filter-group">
       <a class="waves-effect waves-light btn blue darken-3" @click="changeLayout">
         <i class="material-icons left">
-          {{(movieStore.layout === 'grid_off') ? 'grid_on' : 'grid_off'}}
+          {{(layout === 'grid_off') ? 'grid_on' : 'grid_off'}}
         </i>change layout</a>
     </div>
     <div class="filter-group">
       <label>Sort by:</label>
-      <select v-model="movieStore.params.type" @input="changeSort">
+      <select v-model="type" @input="changeSort">
         <option v-for="option in sortByOptions"
           :key="option.value" :value="option.value">
           {{option.text}}
@@ -23,6 +23,7 @@
 <script>
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
+// import { computed } from 'vue';
 
 export default {
   setup() {
@@ -31,19 +32,19 @@ export default {
     const movieStore = store.state.movieList;
 
     const changeSort = async (e) => {
-      if (e.target.value !== store.state.movieList.params.type) {
+      if (e.target.value !== movieStore.params.type) {
         await router.push({
           name: 'Home',
           params: {
             type: e.target.value,
           },
         });
-        await store.dispatch('getMovies');
+        // await store.dispatch('changeType', e.target.value);
       }
     };
 
     return {
-      movieStore,
+      layout: movieStore.layout,
       changeSort,
       changeLayout: () => {
         store.dispatch('changeLayout');
@@ -59,6 +60,16 @@ export default {
         { text: 'Upcoming', value: 'upcoming' },
       ],
     };
+  },
+  computed: {
+    type: {
+      get() {
+        return this.$store.state.movieList.params.type;
+      },
+      set() {
+        // empty because it's automatically set by the router
+      },
+    },
   },
 };
 </script>

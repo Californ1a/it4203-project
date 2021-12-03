@@ -9,6 +9,7 @@
       </div>
       <div class="card-action">
         <a :href="`https://www.themoviedb.org/movie/${movie.id}`">TMDB</a>
+        <router-link :to="{ name: 'Movie', params: { id: movie.id }}">Details</router-link>
       </div>
       <div class="card-reveal">
         <span class="card-title white-text">{{movie.title}}

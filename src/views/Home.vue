@@ -2,18 +2,11 @@
   <div class="home">
     <div class="main-content">
       <div class="main-main">
-        <div class="movie-list" :class="movieStore.layout">
+        <div class="movie-list" :class="layout">
           <MovieCard v-for="movie in movies" :movie="movie" :key="movie.id"
-            :layout="movieStore.layout" />
+            :layout="layout" />
         </div>
-        <div v-if="movieStore.loading" class="progress blue lighten-4">
-          <div class="indeterminate blue darken-3"></div>
-        </div>
-        <div v-if="movieStore.error" class="card red">
-          <div class="card-content white-text">
-            <span class="card-title">{{ movieStore.error }}</span>
-          </div>
-        </div>
+        <LoadOrError />
       </div>
       <Filters />
     </div>
@@ -22,36 +15,49 @@
 
 <script>
 import { useStore } from 'vuex';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 import MovieCard from '@/components/MovieCard.vue';
 import Filters from '@/components/Filters.vue';
+import LoadOrError from '@/components/LoadOrError.vue';
 
 export default {
   components: {
     MovieCard,
     Filters,
+    LoadOrError,
   },
   setup() {
     const store = useStore();
 
     store.dispatch('getMovies');
 
-    const movieStore = store.state.movieList;
+    const type = computed(() => store.state.route.params.type);
+
+    watch(type, (newType) => {
+      console.log('newType', newType);
+      if (!newType) return;
+      store.dispatch('changeType', newType);
+    });
 
     window.onscroll = async () => {
+      if (store.state.route.name !== 'Home') return;
       const de = document.documentElement;
-      const bottomOfWindow = de.scrollTop + window.innerHeight >= de.offsetHeight - 150;
-      if (bottomOfWindow && !movieStore.loading && !movieStore.error) {
+      const bottomOfWindow = de.scrollTop + window.innerHeight >= de.offsetHeight - 200;
+      if (bottomOfWindow && !store.state.loading && !store.state.error) {
         await store.dispatch('getMoreMovies');
       }
     };
 
     return {
-      movieStore,
+      layout: computed(() => store.state.movieList.layout),
       movies: computed(() => store.state.movieList.data),
     };
   },
+  // computed: mapState({
+  //   layout: (state) => state.movieList.layout,
+  //   movies: (state) => state.movieList.data,
+  // }),
 };
 </script>
 

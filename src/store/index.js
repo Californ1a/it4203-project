@@ -3,19 +3,20 @@ import { createStore } from 'vuex';
 import API from '@/lib/API';
 
 function formatMovieData(data) {
-  return data.map((movie) => ({
+  const formatter = (movie) => ({
     ...movie,
     overview: (movie.overview) ? movie.overview : 'No overview available',
     poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
     backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
-  }));
+  });
+  return (Array.isArray(data)) ? data.map(formatter) : formatter(data);
 }
 
 export default createStore({
   state: {
+    loading: false,
+    error: '',
     movieList: {
-      loading: false,
-      error: '',
       data: [],
       layout: 'grid_on',
       params: {
@@ -24,7 +25,13 @@ export default createStore({
         query: '',
       },
     },
-    pageTitle: '',
+    pageTitle: 'Movie App',
+    movieDetails: {
+      data: {
+        title: '',
+      },
+      id: '',
+    },
   },
   mutations: {
     setMovieList(state, payload) {
@@ -47,11 +54,11 @@ export default createStore({
     setMovieListLayout(state, payload) {
       state.movieList.layout = payload;
     },
-    toggleMovieListLoading(state) {
-      state.movieList.loading = !state.movieList.loading;
+    toggleLoading(state) {
+      state.loading = !state.loading;
     },
-    setMovieListError(state, payload) {
-      state.movieList.error = payload;
+    setError(state, payload) {
+      state.error = payload;
     },
     setMovieListParams(state, payload) {
       state.movieList.params = {
@@ -64,10 +71,17 @@ export default createStore({
       state.pageTitle = payload;
       document.title = state.pageTitle;
     },
+    setMovieDetails(state, payload) {
+      console.log(payload);
+      state.movieDetails.data = formatMovieData(payload);
+    },
+    setMovieDetailsId(state, payload) {
+      state.movieDetails.id = payload;
+    },
   },
   actions: {
     async getMovies(context) {
-      context.commit('toggleMovieListLoading');
+      context.commit('toggleLoading');
       context.dispatch('fetchParams');
       context.dispatch('setPageTitle');
       try {
@@ -75,15 +89,16 @@ export default createStore({
           query: context.state.movieList.params.query,
           page: context.state.movieList.params.page,
         });
+        console.log(res);
         context.commit('setMovieList', res);
       } catch (err) {
-        context.commit('setMovieListError', err.message);
+        context.commit('setError', err.message);
       } finally {
-        context.commit('toggleMovieListLoading');
+        context.commit('toggleLoading');
       }
     },
     async getMoreMovies(context) {
-      context.commit('toggleMovieListLoading');
+      context.commit('toggleLoading');
       context.commit('incrementPage');
       try {
         const res = await API.getMovies(context.state.movieList.params.type, {
@@ -92,32 +107,53 @@ export default createStore({
         });
         context.commit('addToMovieList', res);
       } catch (err) {
-        context.commit('setMovieListError', err.message);
+        context.commit('setError', err.message);
       } finally {
-        context.commit('toggleMovieListLoading');
+        context.commit('toggleLoading');
       }
     },
     fetchParams(context) {
-      context.commit('setMovieListParams', context.state.route.params);
+      if (context.state.route.name === 'Home') {
+        context.commit('setMovieListParams', context.state.route.params);
+      } else if (context.state.route.name === 'Movie') {
+        context.commit('setMovieDetailsId', context.state.route.params.id);
+      }
     },
     changeLayout(context) {
       const payload = (context.state.movieList.layout === 'grid_off') ? 'grid_on' : 'grid_off';
       context.commit('setMovieListLayout', payload);
     },
     async changeType(context, payload) {
-      context.commit('toggleMovieListLoading');
+      context.commit('toggleLoading');
       context.commit('setMovieListType', payload);
       await context.dispatch('getMovies');
-      context.commit('toggleMovieListLoading');
+      context.commit('toggleLoading');
     },
     setPageTitle(context) {
-      if (context.state.movieList.params.query === '' && context.state.movieList.params.type !== 'search') {
-        const prettyType = context.state.movieList.params.type.replace('_', ' ')
-          .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-        context.commit('setPageTitle', `${prettyType} Movies | Movie App`);
-      } else {
-        const ellipsis = (context.state.movieList.params.query.length > 20) ? '...' : '';
-        context.commit('setPageTitle', `Search: ${context.state.movieList.params.query}${ellipsis} | Movie App`);
+      if (context.state.route.name === 'Home') {
+        if (context.state.movieList.params.query === '' && context.state.movieList.params.type !== 'search') {
+          const prettyType = context.state.movieList.params.type.replace('_', ' ')
+            .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+          context.commit('setPageTitle', `${prettyType} Movies | Movie App`);
+        } else {
+          const ellipsis = (context.state.movieList.params.query.length > 20) ? '...' : '';
+          context.commit('setPageTitle', `Search: ${context.state.movieList.params.query}${ellipsis} | Movie App`);
+        }
+      } else if (context.state.route.name === 'Movie') {
+        context.commit('setPageTitle', `${context.state.movieDetails.data.title} | Movie App`);
+      }
+    },
+    async getMovieDetails(context) {
+      context.commit('toggleLoading');
+      context.dispatch('fetchParams');
+      try {
+        const res = await API.getMovieDetails(context.state.movieDetails.id);
+        context.commit('setMovieDetails', res);
+      } catch (err) {
+        context.commit('setError', err.message);
+      } finally {
+        context.commit('toggleLoading');
+        context.dispatch('setPageTitle');
       }
     },
   },
