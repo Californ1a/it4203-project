@@ -54,15 +54,15 @@ export default createStore({
       state.movieList.error = payload;
     },
     setMovieListParams(state, payload) {
-      // console.log('payload', payload);
-      // console.log('params', state.movieList.params);
-      // console.log('params2', state.route.params);
-      state.movieList.params.page = (payload && payload.page) ? payload.page : 1;
-      state.movieList.params.type = (payload && payload.type) ? payload.type : 'popular';
-      state.movieList.params.query = (payload && payload.query) ? payload.query : '';
+      state.movieList.params = {
+        page: payload?.page ?? 1,
+        type: payload?.type ?? 'popular',
+        query: payload?.query ?? '',
+      };
     },
     setPageTitle(state, payload) {
       state.pageTitle = payload;
+      document.title = state.pageTitle;
     },
   },
   actions: {
@@ -98,7 +98,6 @@ export default createStore({
       }
     },
     fetchParams(context) {
-      // console.log('fetchParams', context.state);
       context.commit('setMovieListParams', context.state.route.params);
     },
     changeLayout(context) {
@@ -122,13 +121,6 @@ export default createStore({
       }
     },
   },
-  getters: {
-    movieList(state) {
-      return state.movieList;
-    },
-    pageTitle(state) {
-      return state.pageTitle;
-    },
-  },
+  getters: {},
   modules: {},
 });

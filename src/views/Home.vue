@@ -2,12 +2,17 @@
   <div class="home">
     <div class="main-content">
       <div class="main-main">
-        <div class="movie-list" :class="movieState.layout">
+        <div class="movie-list" :class="movieStore.layout">
           <MovieCard v-for="movie in movies" :movie="movie" :key="movie.id"
-            :layout="movieState.layout" />
+            :layout="movieStore.layout" />
         </div>
-        <div v-if="movieState.loading" class="progress blue lighten-4">
+        <div v-if="movieStore.loading" class="progress blue lighten-4">
           <div class="indeterminate blue darken-3"></div>
+        </div>
+        <div v-if="movieStore.error" class="card red">
+          <div class="card-content white-text">
+            <span class="card-title">{{ movieStore.error }}</span>
+          </div>
         </div>
       </div>
       <div class="filters">
@@ -16,35 +21,18 @@
         <div class="filter-group">
           <a class="waves-effect waves-light btn blue darken-3" @click="changeLayout">
             <i class="material-icons left">
-              {{(movieState.layout === 'grid_off') ? 'grid_on' : 'grid_off'}}
+              {{(movieStore.layout === 'grid_off') ? 'grid_on' : 'grid_off'}}
             </i>change layout</a>
         </div>
         <div class="filter-group">
           <label>Sort by:</label>
-          <select v-model="movieState.params.type" @input="changeSort">
+          <select v-model="movieStore.params.type" @input="changeSort">
             <option v-for="option in sortByOptions"
               :key="option.value" :value="option.value">
               {{option.text}}
             </option>
           </select>
         </div>
-        <!-- <div class="filter-group">
-          <label>Filter by:</label>
-          <select v-model="filterBy">
-            <option value="all">All</option>
-            <option value="action">Action</option>
-            <option value="comedy">Comedy</option>
-            <option value="drama">Drama</option>
-            <option value="horror">Horror</option>
-            <option value="romance">Romance</option>
-            <option value="scifi">Sci-Fi</option>
-          </select>
-        </div> -->
-      </div>
-    </div>
-    <div v-if="movieState.error" class="card red">
-      <div class="card-content white-text">
-        <span class="card-title">{{ movieState.error }}</span>
       </div>
     </div>
   </div>
@@ -52,7 +40,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import MovieCard from '@/components/MovieCard.vue';
@@ -66,14 +54,6 @@ export default {
     const router = useRouter();
 
     store.dispatch('getMovies');
-    store.dispatch('setPageTitle');
-
-    const pageTitle = computed(() => store.getters.pageTitle);
-    document.title = store.state.pageTitle;
-
-    watch(pageTitle, () => {
-      document.title = store.state.pageTitle;
-    });
 
     const movieStore = store.state.movieList;
 
@@ -98,7 +78,7 @@ export default {
     };
 
     return {
-      movieState: computed(() => store.state.movieList),
+      movieStore,
       movies: computed(() => store.state.movieList.data),
       changeSort,
       changeLayout: () => {
