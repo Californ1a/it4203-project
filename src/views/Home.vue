@@ -52,7 +52,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 import MovieCard from '@/components/MovieCard.vue';
@@ -66,6 +66,14 @@ export default {
     const router = useRouter();
 
     store.dispatch('getMovies');
+    store.dispatch('setPageTitle');
+
+    const pageTitle = computed(() => store.getters.pageTitle);
+    document.title = store.state.pageTitle;
+
+    watch(pageTitle, () => {
+      document.title = store.state.pageTitle;
+    });
 
     const movieStore = store.state.movieList;
 

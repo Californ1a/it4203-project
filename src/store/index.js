@@ -2,6 +2,15 @@ import { createStore } from 'vuex';
 
 import API from '@/lib/API';
 
+function formatMovieData(data) {
+  return data.map((movie) => ({
+    ...movie,
+    overview: (movie.overview) ? movie.overview : 'No overview available',
+    poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+    backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
+  }));
+}
+
 export default createStore({
   state: {
     movieList: {
@@ -15,26 +24,17 @@ export default createStore({
         query: '',
       },
     },
+    pageTitle: '',
   },
   mutations: {
     setMovieList(state, payload) {
-      state.movieList.data = payload.results.map((movie) => ({
-        ...movie,
-        overview: (movie.overview) ? movie.overview : 'No overview available',
-        poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-        backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
-      }));
+      state.movieList.data = formatMovieData(payload.results);
     },
     incrementPage(state) {
       state.movieList.params.page += 1;
     },
     addToMovieList(state, payload) {
-      state.movieList.data.push(...payload.results.map((movie) => ({
-        ...movie,
-        overview: (movie.overview) ? movie.overview : 'No overview available',
-        poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-        backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
-      })));
+      state.movieList.data.push(...formatMovieData(payload.results));
     },
     setMovieListType(state, payload) {
       state.movieList.params.type = payload;
@@ -61,11 +61,15 @@ export default createStore({
       state.movieList.params.type = (payload && payload.type) ? payload.type : 'popular';
       state.movieList.params.query = (payload && payload.query) ? payload.query : '';
     },
+    setPageTitle(state, payload) {
+      state.pageTitle = payload;
+    },
   },
   actions: {
     async getMovies(context) {
       context.commit('toggleMovieListLoading');
       context.dispatch('fetchParams');
+      context.dispatch('setPageTitle');
       try {
         const res = await API.getMovies(context.state.movieList.params.type, {
           query: context.state.movieList.params.query,
@@ -107,10 +111,23 @@ export default createStore({
       await context.dispatch('getMovies');
       context.commit('toggleMovieListLoading');
     },
+    setPageTitle(context) {
+      if (context.state.movieList.params.query === '' && context.state.movieList.params.type !== 'search') {
+        const prettyType = context.state.movieList.params.type.replace('_', ' ')
+          .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+        context.commit('setPageTitle', `${prettyType} Movies | Movie App`);
+      } else {
+        const ellipsis = (context.state.movieList.params.query.length > 20) ? '...' : '';
+        context.commit('setPageTitle', `Search: ${context.state.movieList.params.query}${ellipsis} | Movie App`);
+      }
+    },
   },
   getters: {
     movieList(state) {
       return state.movieList;
+    },
+    pageTitle(state) {
+      return state.pageTitle;
     },
   },
   modules: {},
