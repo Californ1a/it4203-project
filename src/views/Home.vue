@@ -21,7 +21,7 @@
         </div>
         <div class="filter-group">
           <label>Sort by:</label>
-          <select v-model="sortBy" @input="changeSort">
+          <select v-model="movieState.params.type" @input="changeSort">
             <option v-for="option in sortByOptions"
               :key="option.value" :value="option.value">
               {{option.text}}
@@ -51,11 +51,10 @@
 </template>
 
 <script>
-import { computed, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
-import API from '@/lib/API';
-import useMovies from '@/hooks/useMovies';
 import MovieCard from '@/components/MovieCard.vue';
 
 export default {
@@ -63,64 +62,44 @@ export default {
     MovieCard,
   },
   setup() {
-    const route = useRoute();
+    const store = useStore();
     const router = useRouter();
-    const movieType = computed(() => route.params.type);
-    const movieState = useMovies(movieType);
-    watch(movieType, () => {
-      const prettyType = movieType.value.replace('_', ' ')
-        .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-      document.title = `${prettyType} Movies | Movie App`;
-    }, { immediate: true });
-    const movies = computed(() => movieState.data.map((movie) => ({
-      ...movie,
-      overview: (movie.overview) ? movie.overview : 'No overview available',
-      poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-      backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
-    })));
+
+    store.dispatch('getMovies');
+
+    const movieStore = store.state.movieList;
 
     window.onscroll = async () => {
       const de = document.documentElement;
       const bottomOfWindow = de.scrollTop + window.innerHeight >= de.offsetHeight - 150;
-      if (bottomOfWindow && !movieState.loading && !movieState.error) {
-        movieState.loading = true;
-        try {
-          movieState.page += 1;
-          const res = await API.getMovies(movieType.value, movieState.page);
-          movieState.data.push(...res.results);
-          movieState.loading = false;
-        } catch (err) {
-          movieState.error = err.message || 'Something went wrong';
-          movieState.loading = false;
-        }
+      if (bottomOfWindow && !movieStore.loading && !movieStore.error) {
+        await store.dispatch('getMoreMovies');
       }
     };
 
-    const changeSort = (e) => {
-      if (e.target.value !== movieType.value) {
-        router.push({
+    const changeSort = async (e) => {
+      if (e.target.value !== store.state.movieList.params.type) {
+        await router.push({
           name: 'Home',
           params: {
             type: e.target.value,
           },
         });
+        await store.dispatch('getMovies');
       }
     };
 
-    const changeLayout = () => {
-      movieState.layout = (movieState.layout === 'grid_off') ? 'grid_on' : 'grid_off';
-    };
-
     return {
-      movieState,
-      movies,
+      movieState: computed(() => store.state.movieList),
+      movies: computed(() => store.state.movieList.data),
       changeSort,
-      changeLayout,
+      changeLayout: () => {
+        store.dispatch('changeLayout');
+      },
     };
   },
   data() {
     return {
-      sortBy: this.movieState.type,
       sortByOptions: [
         { text: 'Popular', value: 'popular' },
         { text: 'Now Playing', value: 'now_playing' },
@@ -128,9 +107,6 @@ export default {
         { text: 'Upcoming', value: 'upcoming' },
       ],
     };
-  },
-  updated() {
-    this.sortBy = this.movieState.type;
   },
 };
 </script>
@@ -187,6 +163,8 @@ select {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  max-width: 1100px;
+  margin: auto;
 }
 
 .grid_off .card {
@@ -194,15 +172,6 @@ select {
   grid-template-columns: auto 1fr auto;
   width: 90%;
 }
-
-/* .grid_off .card .card-reveal {
-  display: none !important;
-} */
-
-/* .grid_off .card-reveal .card-title,
-.grid_off .card-reveal p {
-  margin-right: 12.4%;
-} */
 
 .grid_off .card-title {
   height: 100%;
