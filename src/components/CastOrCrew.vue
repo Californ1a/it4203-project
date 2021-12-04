@@ -74,6 +74,7 @@ export default {
   max-height: 40rem;
   overflow-y: scroll;
   padding-bottom: 2px;
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .collection .collection-item.avatar {
@@ -84,6 +85,8 @@ export default {
   justify-content: space-between;
   padding: 0;
   border-radius: 10px;
+  transition: transform 0.2s ease, border-radius 0.2s ease-in-out;
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .person-container {
@@ -124,13 +127,10 @@ export default {
 }
 
 .collection-item.hoverable:hover {
-  /* box-shadow: 0 8px 17px 0 rgba(255, 255, 255, 0.1), 0 6px 20px 0 rgba(255, 255, 255, 0.09); */
   z-index: 10;
-  transform: scale(1.02);
-  /* display: table; */
-  /* zoom: 1.02; */
-  transition: transform 0.15s ease, border-radius 0.2s ease-in-out;
-  border-radius: 20px;
+  transform: perspective(0px) scale(1.02);
+  -webkit-font-smoothing: subpixel-antialiased;
+  border-radius: 18px;
 }
 
 .person-info {
@@ -141,6 +141,7 @@ export default {
   padding: 10px 20px;
   height: 100%;
   max-height: 85px;
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .collection-item .title a {
@@ -162,10 +163,6 @@ export default {
   flex-direction: column;
   justify-content: space-around;
   color: #f0f0f0;
-}
-
-.person-info p span:last-child {
-  font-size: 0.96rem;
-  /* padding-bottom: 3px; */
+  -webkit-font-smoothing: subpixel-antialiased;
 }
 </style>
