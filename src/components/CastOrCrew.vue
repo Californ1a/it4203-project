@@ -73,9 +73,6 @@ export default {
         if (current !== -1) {
           if (!seen.has(cur.job)) {
             seen.add(cur.job);
-            // console.log('person', cur.name, 'id', cur.id, 'job', cur.job);
-            // console.log('acc', acc);
-            // console.log('acc[current]', acc[current]);
             acc[current].job = `${cur.job}, ${acc[current].job}`;
           }
         }
@@ -191,5 +188,9 @@ export default {
   justify-content: space-around;
   color: #f0f0f0;
   -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.person-info p span:last-child {
+  font-size: 0.95rem;
 }
 </style>

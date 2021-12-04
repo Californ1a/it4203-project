@@ -159,6 +159,7 @@ export default createStore({
       context.dispatch('fetchParams');
       try {
         const res = await API.getMovieDetails(context.state.movieDetails.id);
+        // console.log(res);
         context.commit('setMovieDetails', res);
       } catch (err) {
         context.commit('setError', err.message);

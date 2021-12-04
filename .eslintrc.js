@@ -16,5 +16,8 @@ module.exports = {
   },
   globals: {
     'M': 'readable',
+    'marked': 'readable',
+    'hljs': 'readable',
+    'DOMPurify': 'readable',
   }
 };

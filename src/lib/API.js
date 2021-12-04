@@ -45,7 +45,7 @@ export default {
     }
     const API_URL = 'https://api.themoviedb.org/3';
     const API_KEY = `${process.env.VUE_APP_API_KEY_V3}`;
-    const url = `${API_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=images,credits`;
+    const url = `${API_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=images,credits,reviews`;
     const response = await fetch(url, {
       headers: {
         accept: 'application/json',

@@ -110,6 +110,9 @@
           <CastOrCrew :type="'cast'" :list="credits?.cast" />
           <CastOrCrew :type="'crew'" :list="credits?.crew" />
         </div>
+        <div class="reviews">
+          <Reviews :reviews="movie.reviews.results" />
+        </div>
       </div>
     </div>
   </div>
@@ -121,11 +124,13 @@ import { computed, watch } from 'vue';
 
 import LoadOrError from '@/components/LoadOrError.vue';
 import CastOrCrew from '@/components/CastOrCrew.vue';
+import Reviews from '@/components/Reviews.vue';
 
 export default {
   components: {
     LoadOrError,
     CastOrCrew,
+    Reviews,
   },
   setup() {
     const store = useStore();
