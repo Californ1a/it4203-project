@@ -38,6 +38,14 @@
                   </a></span>
               </div>
             </div>
+            <div v-if="movie.id" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">TMDB:</span>
+                <span class="extra-details-value"><a :href="`https://www.themoviedb.org/movie/${movie.id}`" target="_blank">
+                    {{ movie.id }}
+                  </a></span>
+              </div>
+            </div>
             <div v-if="movie.imdb_id" class="extra-details-item">
               <div class="detail-item-wrapper">
                 <span class="extra-details-label">IMDB:</span>
@@ -129,7 +137,7 @@ export default {
     const id = computed(() => store.state.route.params.id);
 
     watch(id, (newId) => {
-      if (!newId) return;
+      if (!newId || store.state.route.name !== 'Movie') return;
       store.dispatch('getMovieDetails');
     });
 
