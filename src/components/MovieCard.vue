@@ -4,7 +4,7 @@
       <div v-if="isImage" class="card-image waves-effect waves-block waves-light">
         <img class="activator" :src="movie.poster" />
       </div>
-      <div class="card-content white-text">
+      <div class="card-content white-text waves-effect waves-block waves-light">
         <span class="card-title activator">{{movie.title}}</span>
       </div>
       <div class="card-action">
@@ -12,7 +12,7 @@
         <router-link :to="{ name: 'Movie', params: { id: movie.id }}">Details</router-link>
       </div>
       <div class="card-reveal">
-        <span class="card-title white-text">{{movie.title}}
+        <span class="card-title white-text waves-effect waves-block waves-light">{{movie.title}}
           <i class="material-icons right">close</i></span>
         <p>{{movie.overview}}</p>
       </div>
