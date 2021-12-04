@@ -3,7 +3,7 @@
     <h3>{{type.charAt(0).toUpperCase() + type.slice(1)}}</h3>
     <div class="cast-list">
       <ul class="collection">
-        <li v-for="person in list" :person="person" :key="person.id"
+        <li v-for="person in filteredList" :person="person" :key="person.id"
           class="collection-item hoverable avatar">
           <div class="person-container">
             <div class="person-info" @click="goToPerson(person)">
@@ -38,13 +38,14 @@
 
 <script>
 import { useRouter } from 'vue-router';
+import { computed } from 'vue';
 
 export default {
   props: {
     list: Array,
     type: String,
   },
-  setup() {
+  setup(props) {
     const router = useRouter();
 
     const goToPerson = async (person) => {
@@ -57,8 +58,34 @@ export default {
       });
     };
 
+    let crewList = [];
+    if (props.type === 'crew') {
+      const seenPerson = new Map();
+      crewList = props.list.reduce((acc, cur) => {
+        if (!seenPerson.has(cur.id)) {
+          const jobs = new Set();
+          jobs.add(cur.job);
+          seenPerson.set(cur.id, jobs);
+          acc.push(cur);
+        }
+        const seen = seenPerson.get(cur.id);
+        const current = acc.map((i) => i.id).indexOf(cur.id);
+        if (current !== -1) {
+          if (!seen.has(cur.job)) {
+            seen.add(cur.job);
+            // console.log('person', cur.name, 'id', cur.id, 'job', cur.job);
+            // console.log('acc', acc);
+            // console.log('acc[current]', acc[current]);
+            acc[current].job = `${cur.job}, ${acc[current].job}`;
+          }
+        }
+        return acc;
+      }, []);
+    }
+
     return {
       goToPerson,
+      filteredList: computed(() => ((props.type === 'cast') ? props.list : crewList)),
     };
   },
 };
@@ -128,7 +155,7 @@ export default {
 
 .collection-item.hoverable:hover {
   z-index: 10;
-  transform: perspective(0px) scale(1.02);
+  transform: perspective(0px) scale(1.005);
   -webkit-font-smoothing: subpixel-antialiased;
   border-radius: 18px;
 }
