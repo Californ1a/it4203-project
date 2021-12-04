@@ -3,11 +3,14 @@ import { createStore } from 'vuex';
 import API from '@/lib/API';
 
 function formatMovieData(data) {
+  if (!data) return {};
+  if (Array.isArray(data) && data.length === 0) return [];
+  if (typeof data === 'object' && Object.keys(data).length === 0) return {};
   const formatter = (movie) => ({
     ...movie,
     overview: (movie.overview) ? movie.overview : 'No overview available',
-    poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-    backdrop: `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`,
+    poster: (movie.poster_path) ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '',
+    backdrop: (movie.backdrop_path) ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}` : '',
   });
   return (Array.isArray(data)) ? data.map(formatter) : formatter(data);
 }
@@ -72,7 +75,7 @@ export default createStore({
       document.title = state.pageTitle;
     },
     setMovieDetails(state, payload) {
-      console.log(payload);
+      // console.log(payload);
       state.movieDetails.data = formatMovieData(payload);
     },
     setMovieDetailsId(state, payload) {
@@ -84,12 +87,14 @@ export default createStore({
       context.commit('toggleLoading');
       context.dispatch('fetchParams');
       context.dispatch('setPageTitle');
+      context.commit('setMovieDetails', {});
+      context.commit('setMovieDetailsId', '');
       try {
         const res = await API.getMovies(context.state.movieList.params.type, {
           query: context.state.movieList.params.query,
           page: context.state.movieList.params.page,
         });
-        console.log(res);
+        // console.log(res);
         context.commit('setMovieList', res);
       } catch (err) {
         context.commit('setError', err.message);

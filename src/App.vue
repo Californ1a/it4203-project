@@ -1,6 +1,6 @@
 <template>
   <NavBar />
-  <router-view class="container" />
+  <router-view />
 </template>
 
 <script>
@@ -14,7 +14,7 @@ export default {
 </script>
 
 <style>
-  body {
-    background-color: #1B1725;
-  }
+body {
+  background-color: #1B1725;
+}
 </style>

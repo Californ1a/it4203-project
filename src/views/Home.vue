@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home container">
     <div class="main-content">
       <div class="main-main">
         <div class="movie-list" :class="layout">
@@ -35,7 +35,7 @@ export default {
     const type = computed(() => store.state.route.params.type);
 
     watch(type, (newType) => {
-      console.log('newType', newType);
+      // console.log('newType', newType);
       if (!newType) return;
       store.dispatch('changeType', newType);
     });
@@ -118,12 +118,19 @@ export default {
   width: fit-content;
 }
 
+.grid_off .card-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .grid_off .card-content {
   padding: 0;
 }
 
 .grid_off .card-action {
-  height: fit-content;
+  border-left: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .grid_off .card .card-action a {
