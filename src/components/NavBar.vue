@@ -5,8 +5,8 @@
         <router-link to="/movies/popular" class="brand-logo">IT4203 Project</router-link>
         <form @submit.prevent="updateMovies">
           <div class="input-field blue darken-1">
-            <input v-model="searchTerm" ref="searchRef" id="search"
-              type="search" class="autocomplete" autocomplete="off" required>
+            <input v-model="searchTerm" ref="searchRef" id="search" @focus="searchFocus"
+              placeholder="Search" type="search" class="autocomplete" autocomplete="off" required>
             <label class="label-icon" for="search"><i class="material-icons">search</i></label>
             <i class="material-icons">close</i>
           </div>
@@ -33,8 +33,6 @@ import { useRouter } from 'vue-router';
 import { onMounted, ref, watch } from 'vue';
 import { useStore } from 'vuex';
 
-import API from '@/lib/API';
-
 export default {
   setup() {
     const store = useStore();
@@ -47,29 +45,34 @@ export default {
     onMounted(() => {
       instance = M.Autocomplete.init(searchRef.value, {
         data: {},
-        onAutocomplete(val) {
-          console.log(val);
-          // TODO: go to details page
-          router.push({
-            name: 'Home',
+        async onAutocomplete(val) {
+          if (instance) {
+            instance.close();
+          }
+          if (searchRef.value) {
+            searchRef.value.blur();
+          }
+          const selectedMovie = store.state.searchList.data.find((movie) => movie.title === val);
+          await router.push({
+            name: 'Movie',
             params: {
-              type: 'search',
-              query: val,
+              id: selectedMovie.id,
             },
           });
         },
       });
       async function getResults() {
         if (searchTerm.value.length < 2) return;
-        const res = await API.getMovies('search', {
-          query: searchTerm.value,
-        });
-        console.log(res.results);
+        await store.dispatch('getSearchSuggestions', searchTerm.value);
+        // const res = await API.getMovies('search', {
+        //   query: searchTerm.value,
+        // });
+        // console.log(res);
 
         function poster(movie) {
           return (movie.poster_path) ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/50x50';
         }
-        const results = res.results.reduce((acc, movie) => {
+        const results = store.state.searchList.data.reduce((acc, movie) => {
           if (movie.original_title && movie.title) {
             if (movie.original_title === movie.title) {
               acc[movie.title] = poster(movie);
@@ -88,6 +91,7 @@ export default {
           }
           return acc;
         }, {});
+
         instance.updateData(results);
         instance.open();
       }
@@ -99,9 +103,18 @@ export default {
       });
     });
 
+    function searchFocus(e) {
+      e.target.select();
+    }
+
     const updateMovies = async () => {
       clearTimeout(debounceTimeout);
-      // console.log(searchTerm.value);
+      if (instance) {
+        instance.close();
+      }
+      if (searchRef.value) {
+        searchRef.value.blur();
+      }
       await router.push({
         name: 'Home',
         params: {
@@ -110,18 +123,13 @@ export default {
         },
       });
       await store.dispatch('changeType', 'search');
-      if (instance) {
-        instance.close();
-      }
-      if (searchRef.value) {
-        searchRef.value.blur();
-      }
     };
 
     return {
       searchRef,
       searchTerm,
       updateMovies,
+      searchFocus,
     };
   },
 };

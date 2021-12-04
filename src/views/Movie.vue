@@ -25,52 +25,74 @@
           </div>
           <div class="extra-details">
             <div class="extra-details-item">
-              <span class="extra-details-label">Release Date:</span>
-              <span class="extra-details-value">{{ movie.release_date }}</span>
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Release Date:</span>
+                <span class="extra-details-value">{{ movie.release_date }}</span>
+              </div>
             </div>
             <div v-if="movie.homepage" class="extra-details-item">
-              <span class="extra-details-label">Homepage:</span>
-              <span class="extra-details-value"><a :href="movie.homepage" target="_blank">
-                  {{ movie.homepage.match(/^https?:\/\/(www\.)?([^\/]+)/)[2] }}
-                </a></span>
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Homepage:</span>
+                <span class="extra-details-value"><a :href="movie.homepage" target="_blank">
+                    {{ movie.homepage.match(/^https?:\/\/(www\.)?([^\/]+)/)[2] }}
+                  </a></span>
+              </div>
             </div>
-            <div class="extra-details-item">
-              <span class="extra-details-label">IMDB:</span>
-              <span class="extra-details-value"><a :href="`https://imdb.com/title/${movie.imdb_id}`" target="_blank">
-                  {{ movie.imdb_id }}
-                </a></span>
+            <div v-if="movie.imdb_id" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">IMDB:</span>
+                <span class="extra-details-value"><a :href="`https://imdb.com/title/${movie.imdb_id}`" target="_blank">
+                    {{ movie.imdb_id }}
+                  </a></span>
+              </div>
             </div>
             <div v-if="movie.original_title !== movie.title" class="extra-details-item">
-              <span class="extra-details-label">Original Title:</span>
-              <span class="extra-details-value">{{ movie.original_title }}</span>
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Original Title:</span>
+                <span class="extra-details-value">{{ movie.original_title }}</span>
+              </div>
             </div>
-            <div class="extra-details-item">
-              <span class="extra-details-label">Runtime:</span>
-              <span class="extra-details-value">{{ runtime }}</span>
+            <div v-if="runtime" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Runtime:</span>
+                <span class="extra-details-value">{{ runtime }}</span>
+              </div>
             </div>
-            <div class="extra-details-item">
-              <span class="extra-details-label">Budget:</span>
-              <span class="extra-details-value">{{ budget }}</span>
+            <div v-if="budget !== '$0'" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Budget:</span>
+                <span class="extra-details-value">{{ budget }}</span>
+              </div>
             </div>
-            <div class="extra-details-item">
-              <span class="extra-details-label">Revenue:</span>
-              <span class="extra-details-value">{{ revenue }}</span>
+            <div v-if="revenue !== '$0'" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Revenue:</span>
+                <span class="extra-details-value">{{ revenue }}</span>
+              </div>
             </div>
-            <div class="extra-details-item">
-              <span class="extra-details-label">Status:</span>
-              <span class="extra-details-value">{{ movie.status }}</span>
+            <div v-if="movie.status" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Status:</span>
+                <span class="extra-details-value">{{ movie.status }}</span>
+              </div>
             </div>
-            <div class="extra-details-item">
-              <span class="extra-details-label">Genres:</span>
-              <span class="extra-details-value">{{ genres }}</span>
+            <div v-if="genres" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Genres:</span>
+                <span class="extra-details-value">{{ genres }}</span>
+              </div>
             </div>
-            <div class="extra-details-item">
-              <span class="extra-details-label">Countries:</span>
-              <span class="extra-details-value">{{ countries }}</span>
+            <div v-if="countries" class="extra-details-item">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Countries:</span>
+                <span class="extra-details-value">{{ countries }}</span>
+              </div>
             </div>
-            <div class="extra-details-item companies">
-              <span class="extra-details-label">Companies:</span>
-              <span class="extra-details-value">{{ companies }}</span>
+            <div v-if="companies" class="extra-details-item companies">
+              <div class="detail-item-wrapper">
+                <span class="extra-details-label">Companies:</span>
+                <span class="extra-details-value">{{ companies }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -87,7 +109,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 
 import LoadOrError from '@/components/LoadOrError.vue';
 import CastOrCrew from '@/components/CastOrCrew.vue';
@@ -103,6 +125,13 @@ export default {
     store.dispatch('getMovieDetails');
 
     const movie = computed(() => store.state.movieDetails);
+
+    const id = computed(() => store.state.route.params.id);
+
+    watch(id, (newId) => {
+      if (!newId) return;
+      store.dispatch('getMovieDetails');
+    });
 
     function makeRating(rating, max) {
       const starRating = Math.round((rating / max) * 5);
@@ -222,10 +251,16 @@ export default {
 
 .movie-header {
   text-align: left;
+  flex: 1;
 }
 
 .movie-poster img {
-  max-width: 250px;
+  max-width: min(18vw, 300px);
+  min-width: max(18vw, 180px);
+}
+
+.movie-poster {
+  flex-basis: max(18vw, 180px);
 }
 
 .movie-main {
@@ -263,6 +298,11 @@ export default {
   flex: 1 1 10rem;
 }
 
+.detail-item-wrapper {
+  width: fit-content;
+  margin: auto;
+}
+
 .extra-details-item.companies {
   flex: 2 1 20rem;
 }
@@ -272,7 +312,8 @@ export default {
 }
 
 .extra-details span {
-  display: block;
+  display: flex;
+  width: fit-content;
 }
 
 .movie-tagline {

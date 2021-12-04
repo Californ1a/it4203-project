@@ -35,6 +35,9 @@ export default createStore({
       },
       id: '',
     },
+    searchList: {
+      data: [],
+    },
   },
   mutations: {
     setMovieList(state, payload) {
@@ -80,6 +83,9 @@ export default createStore({
     },
     setMovieDetailsId(state, payload) {
       state.movieDetails.id = payload;
+    },
+    setSearchList(state, payload) {
+      state.searchList.data = formatMovieData(payload.results);
     },
   },
   actions: {
@@ -159,6 +165,16 @@ export default createStore({
       } finally {
         context.commit('toggleLoading');
         context.dispatch('setPageTitle');
+      }
+    },
+    async getSearchSuggestions(context, payload) {
+      try {
+        const res = await API.getMovies('search', {
+          query: payload,
+        });
+        context.commit('setSearchList', res);
+      } catch (err) {
+        context.commit('setError', err.message);
       }
     },
   },
