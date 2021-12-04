@@ -9,7 +9,7 @@
   * [x] Pagination
   * [ ] Filtering
 * [x] Display detailed movie data for one chosen movie/TV show
-  * [ ] Basic info: cast, reviews
+  * [x] Basic info: cast, reviews
 * [ ] Detailed into on actor/actress when clicking on cast
 
 ## Extra
