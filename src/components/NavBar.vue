@@ -65,10 +65,6 @@ export default {
       async function getResults() {
         if (searchTerm.value.length < 2) return;
         await store.dispatch('getSearchSuggestions', searchTerm.value);
-        // const res = await API.getMovies('search', {
-        //   query: searchTerm.value,
-        // });
-        // console.log(res);
 
         function poster(movie) {
           return (movie.poster_path) ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/50x50';

@@ -85,7 +85,6 @@ export default createStore({
       document.title = state.pageTitle;
     },
     setMovieDetails(state, payload) {
-      // console.log(payload);
       state.movieDetails.data = formatMovieData(payload);
     },
     setMovieDetailsId(state, payload) {
@@ -119,7 +118,6 @@ export default createStore({
           query: context.state.movieList.params.query,
           page: context.state.movieList.params.page,
         });
-        // console.log(res);
         context.commit('setMovieList', res);
       } catch (err) {
         context.commit('setError', err.message);
@@ -161,10 +159,8 @@ export default createStore({
       context.commit('setMovieListLayout', payload);
     },
     async changeType(context, payload) {
-      context.commit('toggleLoading');
       context.commit('setMovieListType', payload);
       await context.dispatch('getMovies');
-      context.commit('toggleLoading');
     },
     setPageTitle(context) {
       switch (context.state.route.name) {
@@ -194,7 +190,6 @@ export default createStore({
       context.dispatch('fetchParams');
       try {
         const res = await API.getMovieDetails(context.state.movieDetails.id);
-        // console.log(res);
         context.commit('setMovieDetails', res);
       } catch (err) {
         context.commit('setError', err.message);

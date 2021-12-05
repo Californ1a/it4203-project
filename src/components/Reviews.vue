@@ -50,7 +50,7 @@ export default {
       renderer.link = (href, title, text2) => `<a target="_blank" href="${href}">${text2}</a>`;
       renderer.image = (href, title, text2) => `<img src="${href}" alt="${text2}">`;
       renderer.paragraph = (text2) => `<p>${text2}</p>`;
-      renderer.code = (code, language) => `<pre><code class="language-${language}">${code}</code></pre>`;
+      renderer.code = (code, language) => ((language) ? `<pre><code class="language-${language}">${code}</code></pre>` : `<p>${code}</p>`);
       marked.setOptions({
         renderer,
         gfm: true,

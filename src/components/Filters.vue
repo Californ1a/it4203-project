@@ -1,7 +1,7 @@
 <template>
   <div class="filters">
     <!-- TODO TV/Movie toggle
-        https://codepen.io/personable/pen/stpwD?__cf_chl_captcha_tk__=Afz.BvUzUxQKL5iFgNggt5ttfVITuZgvJHNMrKnLolQ-1638469048-0-gaNycGzNCdE -->
+        https://codepen.io/personable/pen/stpwD -->
     <div class="filter-group">
       <a class="waves-effect waves-light btn blue darken-3" @click="changeLayout">
         <i class="material-icons left">
@@ -23,7 +23,6 @@
 <script>
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-// import { computed } from 'vue';
 
 export default {
   setup() {

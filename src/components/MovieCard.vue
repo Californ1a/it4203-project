@@ -38,12 +38,6 @@ export default {
       isImage,
     };
   },
-  data() {
-    return {
-      isActive: true,
-      error: null,
-    };
-  },
   computed: {
     classObject() {
       return {
@@ -124,7 +118,7 @@ export default {
   transform: scale(1.005);
 }
 
-.card-reveal .grid_off .hoverable:hover {
+.grid_off .hoverable:hover {
   margin-bottom: 0;
   zoom: 1;
   transform: scale(1.005);

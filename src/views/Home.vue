@@ -35,7 +35,6 @@ export default {
     const type = computed(() => store.state.route.params.type);
 
     watch(type, (newType) => {
-      // console.log('newType', newType);
       if (!newType) return;
       store.dispatch('changeType', newType);
     });
@@ -54,10 +53,6 @@ export default {
       movies: computed(() => store.state.movieList.data),
     };
   },
-  // computed: mapState({
-  //   layout: (state) => state.movieList.layout,
-  //   movies: (state) => state.movieList.data,
-  // }),
 };
 </script>
 

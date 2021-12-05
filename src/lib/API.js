@@ -6,7 +6,6 @@ export default {
     if (!type.match(/^(latest|now_playing|popular|top_rated|upcoming|search)$/)) {
       return Promise.reject(new Error('List type must be one of latest, now_playing, popular, top_rated, or upcoming'));
     }
-    // console.log(type, params);
     if (type === 'search' && !params.query) {
       return Promise.reject(new Error('Query is required when type is search'));
     }
@@ -39,6 +38,7 @@ export default {
     error.response = data;
     throw error;
   },
+
   async getMovieDetails(id) {
     if (!id) {
       return Promise.reject(new Error('Movie ID is required'));
@@ -59,6 +59,7 @@ export default {
     error.response = data;
     throw error;
   },
+
   async getPersonDetails(id) {
     if (!id) {
       return Promise.reject(new Error('Person ID is required'));

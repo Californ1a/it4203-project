@@ -4,7 +4,6 @@
   </div>
   <div v-if="!error && !loading" class="outer-container">
     <div class="container inner">
-      <!-- <div class="person-main"> -->
       <div class="person-poster">
         <img :src="avatar" alt="">
       </div>
@@ -57,7 +56,6 @@
           </div>
         </div>
       </div>
-      <!-- </div> -->
       <div class="aka">
         <h5>Also Known As</h5>
         <ul v-if="person.also_known_as?.[0]">
@@ -69,7 +67,7 @@
         <h5>Photos</h5>
         <ul v-if="person.images?.profiles?.[0]">
           <li v-for="(image, i) in person.images?.profiles" :key="i">
-            <img :ref="setItemRef" class="materialboxed" v-if="i <= 18"
+            <img class="materialboxed" v-if="i <= 18"
               :src="`https://image.tmdb.org/t/p/h632${image.file_path}`" width="95" alt="" />
           </li>
           <li class="spacer"></li>
@@ -77,9 +75,6 @@
         <p v-else>No photos</p>
       </div>
     </div>
-    <!-- <div class="second-row"> -->
-
-    <!-- </div> -->
     <div class="container movie">
       <div class="person-movies">
         <h5>Movies</h5>
@@ -102,8 +97,6 @@ import { useStore } from 'vuex';
 import {
   computed,
   watch,
-  ref,
-  onBeforeUpdate,
   onUpdated,
 } from 'vue';
 
@@ -117,7 +110,6 @@ export default {
   },
   setup() {
     const store = useStore();
-    const imageList = ref('');
 
     store.dispatch('getPersonDetails');
 
@@ -130,15 +122,6 @@ export default {
       store.dispatch('getPersonDetails');
     });
 
-    let itemRefs = [];
-    const setItemRef = (el) => {
-      if (el) {
-        itemRefs.push(el);
-      }
-    };
-    onBeforeUpdate(() => {
-      itemRefs = [];
-    });
     onUpdated(() => {
       M.AutoInit();
     });
@@ -156,7 +139,6 @@ export default {
     });
 
     return {
-      imageList,
       person: computed(() => store.state.personDetails.data),
       avatar: computed(() => person.value.data.avatar),
       title: computed(() => person.value.data.name),
@@ -164,7 +146,6 @@ export default {
       error: computed(() => store.state.error),
       loading: computed(() => store.state.loading),
       birthday,
-      setItemRef,
     };
   },
 };
@@ -187,15 +168,6 @@ export default {
   color: white;
   width: 90%;
 }
-
-/* .person-main {
-  display: flex;
-  flex-direction: row;
-  text-shadow: 2px 1px 3px black;
-  justify-content: flex-start;
-  gap: 2rem;
-  margin-top: 2.5rem;
-} */
 
 .person-poster img {
   max-width: min(18vw, 300px);
@@ -258,7 +230,8 @@ export default {
 }
 
 .person-photos {
-  flex: 1 1 50vw;
+  flex: 1;
+  flex-basis: min(49vw, 60%);
 }
 
 .person-photos ul {
