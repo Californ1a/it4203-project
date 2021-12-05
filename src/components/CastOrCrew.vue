@@ -49,7 +49,6 @@ export default {
     const router = useRouter();
 
     const goToPerson = async (person) => {
-      console.log('person', person);
       await router.push({
         name: 'Person',
         params: {
@@ -109,7 +108,7 @@ export default {
   justify-content: space-between;
   padding: 0;
   border-radius: 10px;
-  transition: transform 0.2s ease, border-radius 0.2s ease-in-out;
+  /* transition: transform 0.2s ease, border-radius 0.2s ease-in-out; */
   -webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -152,7 +151,7 @@ export default {
 
 .collection-item.hoverable:hover {
   z-index: 10;
-  transform: perspective(0px) scale(1.005);
+  transform: scale(1.01);
   -webkit-font-smoothing: subpixel-antialiased;
   border-radius: 18px;
 }

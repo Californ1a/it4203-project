@@ -6,7 +6,8 @@
         <form @submit.prevent="updateMovies">
           <div class="input-field blue darken-1">
             <input v-model="searchTerm" ref="searchRef" id="search" @focus="searchFocus"
-              placeholder="Search" type="search" class="autocomplete" autocomplete="off" required>
+              placeholder="Search" type="search" class="autocomplete no-autoinit"
+              autocomplete="off" required>
             <label class="label-icon" for="search"><i class="material-icons">search</i></label>
             <i class="material-icons">close</i>
           </div>

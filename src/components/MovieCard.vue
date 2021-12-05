@@ -1,5 +1,5 @@
 <template>
-  <div class="movie-card" :style="cssProps">
+  <div class="movie-card" ref="movieCard" :style="cssProps">
     <div class="card hoverable movie" v-bind:class="classObject">
       <div v-if="isImage" class="card-image waves-effect waves-block waves-light">
         <img class="activator" :src="movie.poster" />
@@ -26,7 +26,11 @@ import { computed } from 'vue';
 export default {
   props: {
     movie: Object,
-    layout: String,
+    layout: {
+      type: String,
+      default: 'grid_on',
+      required: false,
+    },
   },
   setup(props) {
     const isImage = computed(() => props.movie.poster.match(/\.(jpeg|jpg|gif|png)$/) != null);
@@ -44,7 +48,7 @@ export default {
     classObject() {
       return {
         'no-poster': this.movie.poster.match(/\.(jpeg|jpg|gif|png)$/) == null,
-        'sticky-action': this.layout === 'grid_on',
+        'sticky-action': this.layout !== 'grid_off',
       };
     },
     cssProps() {
@@ -62,14 +66,11 @@ export default {
   margin: auto;
 }
 
-/* .movie-card {
-    flex: 1;
-  } */
-
 .movie {
   width: 220px;
   margin: auto;
-  background-color: #534B62;
+  background-color: #373143;
+  color: black;
 }
 
 .card .card-title {
@@ -98,7 +99,7 @@ export default {
   justify-content: space-between;
   position: sticky;
   top: 0;
-  background-color: #534B62;
+  background-color: #373143;
   padding: 20px 10px 20px 15px;
 }
 
@@ -111,11 +112,23 @@ export default {
   padding: 10px 24px;
 }
 
-.card.no-poster .card-content {
-  min-height: 250px;
+.card.no-poster .card-content span {
+  min-height: 370px;
+  /* min-height: 22.4em; */
 }
 
 .hoverable:hover {
-  box-shadow: 0 8px 17px 0 rgba(255, 255, 255, 0.1), 0 6px 20px 0 rgba(255, 255, 255, 0.09)
+  box-shadow: 0 8px 17px 0 rgba(255, 255, 255, 0.1), 0 6px 20px 0 rgba(255, 255, 255, 0.09);
+  /* zoom: 1.005;
+  margin-bottom: -0.9%; */
+  transform: scale(1.005);
+}
+
+.card-reveal .grid_off .hoverable:hover {
+  margin-bottom: 0;
+  zoom: 1;
+  transform: scale(1.005);
+  z-index: 2;
+  box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 </style>

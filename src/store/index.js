@@ -11,6 +11,7 @@ function formatMovieData(data) {
     overview: (movie.overview) ? movie.overview : 'No overview available',
     poster: (movie.poster_path) ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '',
     backdrop: (movie.backdrop_path) ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}` : '',
+    avatar: (movie.profile_path) ? `https://image.tmdb.org/t/p/h632${movie.profile_path}` : '',
   });
   return (Array.isArray(data)) ? data.map(formatter) : formatter(data);
 }
@@ -37,6 +38,12 @@ export default createStore({
     },
     searchList: {
       data: [],
+    },
+    personDetails: {
+      data: {
+        name: '',
+      },
+      id: '',
     },
   },
   mutations: {
@@ -87,6 +94,18 @@ export default createStore({
     setSearchList(state, payload) {
       state.searchList.data = formatMovieData(payload.results);
     },
+    setPersonDetails(state, payload) {
+      state.personDetails.data = formatMovieData(payload);
+    },
+    setPersonDetailsId(state, payload) {
+      state.personDetails.id = payload;
+    },
+    setPersonMovieCredits(state, payload) {
+      state.personDetails.data.movie_credits = {
+        cast: formatMovieData(payload.cast),
+        crew: formatMovieData(payload.crew),
+      };
+    },
   },
   actions: {
     async getMovies(context) {
@@ -124,10 +143,17 @@ export default createStore({
       }
     },
     fetchParams(context) {
-      if (context.state.route.name === 'Home') {
-        context.commit('setMovieListParams', context.state.route.params);
-      } else if (context.state.route.name === 'Movie') {
-        context.commit('setMovieDetailsId', context.state.route.params.id);
+      switch (context.state.route.name) {
+        case 'Home':
+          context.commit('setMovieListParams', context.state.route.params);
+          break;
+        case 'Movie':
+          context.commit('setMovieDetailsId', context.state.route.params.id);
+          break;
+        case 'Person':
+          context.commit('setPersonDetailsId', context.state.route.params.id);
+          break;
+        default:
       }
     },
     changeLayout(context) {
@@ -141,17 +167,26 @@ export default createStore({
       context.commit('toggleLoading');
     },
     setPageTitle(context) {
-      if (context.state.route.name === 'Home') {
-        if (context.state.movieList.params.query === '' && context.state.movieList.params.type !== 'search') {
-          const prettyType = context.state.movieList.params.type.replace('_', ' ')
-            .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-          context.commit('setPageTitle', `${prettyType} Movies | Movie App`);
-        } else {
-          const ellipsis = (context.state.movieList.params.query.length > 20) ? '...' : '';
-          context.commit('setPageTitle', `Search: ${context.state.movieList.params.query}${ellipsis} | Movie App`);
-        }
-      } else if (context.state.route.name === 'Movie') {
-        context.commit('setPageTitle', `${context.state.movieDetails.data.title} | Movie App`);
+      switch (context.state.route.name) {
+        case 'Home':
+          if (context.state.movieList.params.type !== 'search') {
+            const prettyType = context.state.movieList.params.type.replace('_', ' ')
+              .replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+            context.commit('setPageTitle', `${prettyType} Movies | Movie App`);
+          } else {
+            const ellipsis = (context.state.movieList.params.query.length > 20) ? '...' : '';
+            context.commit('setPageTitle', `Search: ${context.state.movieList.params.query}${ellipsis} | Movie App`);
+          }
+          break;
+        case 'Movie':
+          context.commit('setPageTitle', `${context.state.movieDetails.data.title} | Movie App`);
+          break;
+        case 'Person':
+          context.commit('setPageTitle', `${context.state.personDetails.data.name} | Movie App`);
+          break;
+        default:
+          context.commit('setPageTitle', 'Movie App');
+          break;
       }
     },
     async getMovieDetails(context) {
@@ -177,6 +212,25 @@ export default createStore({
       } catch (err) {
         context.commit('setError', err.message);
       }
+    },
+    async getPersonDetails(context) {
+      context.commit('toggleLoading');
+      context.dispatch('fetchParams');
+      try {
+        const res = await API.getPersonDetails(context.state.personDetails.id);
+        context.commit('setPersonDetails', res);
+        context.dispatch('formatMovieCredits');
+        console.log(res);
+      } catch (err) {
+        context.commit('setError', err.message);
+      } finally {
+        context.commit('toggleLoading');
+        context.dispatch('setPageTitle');
+      }
+    },
+    formatMovieCredits(context) {
+      const credits = context.state.personDetails.data.movie_credits;
+      context.commit('setPersonMovieCredits', credits);
     },
   },
   getters: {},

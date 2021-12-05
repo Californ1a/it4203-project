@@ -1,7 +1,7 @@
 <template>
   <h3>Reviews</h3>
   <div class="reviews-container">
-    <ul class="collapsible popout">
+    <ul v-if="filteredReviews[0]" class="collapsible popout">
       <li v-for="review in filteredReviews" :review="review" :key="review.id">
         <div class="collapsible-header hoverable">
           <div class="avatar">
@@ -11,6 +11,9 @@
         <div class="collapsible-body"><span v-html="parseMarkdown(review.content)"></span></div>
       </li>
     </ul>
+    <div v-else class="no-reviews">
+      <p>No reviews yet.</p>
+    </div>
   </div>
 </template>
 
@@ -120,5 +123,9 @@ export default {
 .collapsible-body {
   border-top: 1px solid rgba(0, 0, 0, 0.3);
   border-bottom: none;
+}
+
+.no-reviews {
+  margin-bottom: 3rem;
 }
 </style>
